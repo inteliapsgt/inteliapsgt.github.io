@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro de Asistencia</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="card shadow-lg mx-auto" style="max-width: 400px;">
+      <div class="card-body">
+        <h4 class="card-title text-center mb-4">Registro de Asistencia</h4>
+        <form id="asistenciaForm">
+          <div class="mb-3">
+            <label for="empleado" class="form-label">Empleado</label>
+            <select class="form-select" id="empleado" required>
+              <option value="">Seleccionar...</option>
+              <option>Ana Pérez</option>
+              <option>Juan López</option>
+              <option>Carlos Gómez</option>
+              <option>María Sánchez</option>
+              <!-- Puedes agregar más nombres aquí -->
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="tipo" class="form-label">Tipo de Marca</label>
+            <select class="form-select" id="tipo" required>
+              <option>Entrada</option>
+              <option>Salida</option>
+              <option>Inicio Almuerzo</option>
+              <option>Fin Almuerzo</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Registrar</button>
+        </form>
+        <div id="estado" class="mt-3 text-center small text-muted"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('asistenciaForm');
+    const estado = document.getElementById('estado');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      estado.textContent = "Obteniendo ubicación...";
+
+      navigator.geolocation.getCurrentPosition(pos => {
+        const data = {
+          codigo: document.getElementById('empleado').value,
+          tipo: document.getElementById('tipo').value,
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        };
+
+        fetch('https://script.google.com/macros/s/AKfycbyxdzSOKMm2-p394UkpfAkJV0HVKWUPTZnQiNoFCxSRduSQ88GxMOiqYZzKzjPGbX8BGA/exec', {
+          method: 'POST',
+          body: JSON.stringify(data)
+        })
+        .then(res => res.text())
+        .then(text => estado.textContent = "✅ Registro enviado.")
+        .catch(err => estado.textContent = "❌ Error al registrar.");
+      }, () => {
+        estado.textContent = "❌ No se pudo obtener ubicación.";
+      });
+    });
+  </script>
+</body>
+</html>

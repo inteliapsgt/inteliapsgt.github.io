@@ -23,6 +23,7 @@
                 <option value="Freddy Amán Contreras">Freddy Amán Contreras</option>
                 <option value="Gregorio Raymundo López">Gregorio Raymundo López</option>
                 <option value="Herberg Solorzano">Herberg Solorzano</option>
+                <option value="Jorge Castillo">Jorge Castillo</option>
                 <option value="Jairo Rodriguez">Jairo Rodriguez</option>
                 <option value="Luis Angel Ramirez">Luis Angel Ramirez</option>
                 <option value="Luis Lopez Vivar">Luis Lopez Vivar</option>
@@ -58,6 +59,8 @@
             </div>
             <button type="submit" class="btn btn-success w-100">Registrar</button>
           </form>
+          <button id="adminBtn" class="btn btn-warning w-100 mt-3" style="display: none;">🔐 Ver registros</button>
+
         </div>
 
         <div id="estado" class="mt-3 text-center small text-muted"></div>
@@ -71,6 +74,7 @@
       "Freddy Amán Contreras": "fcon123",
       "Gregorio Raymundo López": "glop123",
       "Herberg Solorzano": "hsol123",
+      "Jorge Castillo": "castillo100",
       "Jairo Rodriguez": "jrod123",
       "Luis Angel Ramirez": "lram123",
       "Luis Lopez Vivar": "llop123",
@@ -92,11 +96,17 @@
       const clave = document.getElementById('clave').value;
 
       if (claves[nombre] === clave) {
-        document.getElementById('loginBox').style.display = 'none';
-        document.getElementById('formBox').style.display = 'block';
-        empleadoInput.value = nombre;
-        estado.textContent = "";
-      } else {
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('formBox').style.display = 'block';
+  empleadoInput.value = nombre;
+  estado.textContent = "";
+
+  // Mostrar botón solo si es el administrador
+  if (nombre === "Jorge Castillo") {
+    document.getElementById('adminBtn').style.display = 'block';
+  }
+}
+ else {
         estado.textContent = "❌ Nombre o clave incorrectos.";
       }
     });
@@ -125,6 +135,11 @@
         estado.textContent = "❌ No se pudo obtener ubicación.";
       });
     });
+
+    document.getElementById('adminBtn').addEventListener('click', () => {
+  window.location.href = 'admin.html';
+});
+
   </script>
 </body>
 </html>

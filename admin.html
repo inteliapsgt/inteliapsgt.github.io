@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registros de Asistencia</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="card shadow-lg mx-auto" style="max-width: 600px;">
+      <div class="card-body">
+        <h4 class="card-title text-center mb-4">Vista de Administrador</h4>
+
+        <!-- Login para el administrador -->
+        <div id="loginBox">
+          <form id="adminLogin">
+            <div class="mb-3">
+              <label class="form-label">Usuario</label>
+              <input type="text" class="form-control" id="usuario" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Clave</label>
+              <input type="password" class="form-control" id="clave" required>
+            </div>
+            <button class="btn btn-primary w-100">Ver registros</button>
+          </form>
+        </div>
+
+        <!-- Tabla con registros -->
+        <div id="tablaBox" style="display: none;">
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered table-striped">
+              <thead class="table-dark text-center">
+                <tr>
+                  <th>Empleado</th>
+                  <th>Tipo</th>
+                  <th>Fecha</th>
+                  <th>Ubicación</th>
+                </tr>
+              </thead>
+              <tbody id="tablaRegistros"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="estado" class="mt-3 text-center small text-muted"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const adminUsuario = "Jorge";
+    const adminClave = "admin123"; // Cambia esto por la misma clave que en el Apps Script
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyxdzSOKMm2-p394UkpfAkJV0HVKWUPTZnQiNoFCxSRduSQ88GxMOiqYZzKzjPGbX8BGA/exec";
+
+    document.getElementById("adminLogin").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const user = document.getElementById("usuario").value;
+      const pass = document.getElementById("clave").value;
+
+      if (user === adminUsuario && pass === adminClave) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("estado").textContent = "Cargando registros...";
+        fetch(scriptURL + "?clave=" + adminClave)
+          .then(res => res.json())
+          .then(data => {
+            const tabla = document.getElementById("tablaRegistros");
+            tabla.innerHTML = "";
+            data.forEach(r => {
+              tabla.innerHTML += `
+                <tr>
+                  <td>${r.empleado}</td>
+                  <td>${r.tipo}</td>
+                  <td>${r.fecha}</td>
+                  <td><a href="${r.link}" target="_blank">Ver mapa</a></td>
+                </tr>`;
+            });
+            document.getElementById("tablaBox").style.display = "block";
+            document.getElementById("estado").textContent = `Total: ${data.length} registros`;
+          })
+          .catch(err => {
+            document.getElementById("estado").textContent = "❌ Error al cargar datos.";
+          });
+      } else {
+        document.getElementById("estado").textContent = "❌ Usuario o clave incorrectos.";
+      }
+    });
+  </script>
+</body>
+</html>
